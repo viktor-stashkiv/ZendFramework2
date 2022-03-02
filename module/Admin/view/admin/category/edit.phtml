@@ -1,0 +1,56 @@
+<div class="bs-docs-section">
+    <div class="well">
+        <?php
+
+        $form->setAttribute('action',$this->url('admin/category',array('action' => 'edit','id' => $id))); // добавлення action="url" в форму
+        $form->prepare();
+
+        echo $this->form()->openTag($form); // відкриття тега для форми
+
+        echo '<fieldset><legend>Добавлення категорії</legend>';
+
+        foreach ($form as $element){
+            echo '<div class="form-group">';
+            $attributes = $element->getAttributes();
+
+
+            if($element->getLabel()){
+                $element->setLabelAttributes(array('class'=>'col-ig-2 control-label'));
+                if(isset($attributes['required'])){
+                    $element->setLabel($element->getLabel().' *');
+                }
+            }
+
+            if(isset($attributes['type']) && $attributes['type'] == 'text'){
+                echo $this->formLabel($element);
+                echo '<div class="col-lg-10">';
+                echo $this->formInput($element);
+                echo '</div>';
+            }
+            elseif(isset($attributes['type']) && $attributes['type'] == 'texarea'){
+                echo $this->formLabel($element);
+                echo '<div class="col-lg-10">';
+                echo $this->formTextArea($element);
+                echo '</div>';
+            }
+            elseif(isset($attributes['type']) && $attributes['type'] == 'file'){
+                echo $this->formLabel($element);
+                echo '<div class="col-lg-10">';
+                echo $this->formFile($element);
+                echo '</div>';
+            }
+            else {
+                echo '<div class="col-lg-10">';
+                echo $this->formRow($element);
+                echo '</div>';
+            }
+
+            echo '</div>';
+        }
+
+        echo '</fielset>';
+        echo $this->form()->closeTag(); // закриття тегу форми
+        ?>
+
+    </div>
+</div>
