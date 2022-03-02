@@ -1,0 +1,1 @@
+call doctrine-module orm:generate-entities module/Blog/src/ --generate-annotations=true
