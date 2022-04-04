@@ -1,37 +1,32 @@
-body {
-    padding-top: 60px;
-    padding-bottom: 40px;
+.b-example-divider {
+    height: 3rem;
+    background-color: rgba(0, 0, 0, .1);
+    border: solid rgba(0, 0, 0, .15);
+    border-width: 1px 0;
+    box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
 }
 
-.zf-green {
-    color: #68b604;
+.form-control-dark {
+    color: #fff;
+    background-color: var(--bs-dark);
+    border-color: var(--bs-gray);
+}
+.form-control-dark:focus {
+    color: #fff;
+    background-color: var(--bs-dark);
+    border-color: #fff;
+    box-shadow: 0 0 0 .25rem rgba(255, 255, 255, .25);
 }
 
-.btn-success {
-  background-color: #57a900;
-  background-image: -moz-linear-gradient(top, #70d900, #57a900);
-  background-image: -ms-linear-gradient(top, #70d900, #57a900);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#70d900), to(#57a900));
-  background-image: -webkit-linear-gradient(top, #70d900, #57a900);
-  background-image: -o-linear-gradient(top, #70d900, #57a900);
-  background-image: linear-gradient(top, #70d900, #57a900);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#70d900', endColorstr='#57a900', GradientType=0);
+.bi {
+    vertical-align: -.125em;
+    fill: currentColor;
 }
 
-.btn-success:hover,
-.btn-success:active,
-.btn-success.active,
-.btn-success.disabled,
-.btn-success[disabled] {
-  background-color: #57a900;
+.text-small {
+    font-size: 85%;
 }
 
-.btn-success:active, .btn-success.active {
-  background-color: #57a900;
-}
-
-div.container a.brand {
-    background: url("../img/zf2-logo.png") no-repeat scroll 0 10px transparent;
-    margin-left: 0;
-    padding: 8px 20px 12px 40px;
+.dropdown-toggle {
+    outline: 0;
 }

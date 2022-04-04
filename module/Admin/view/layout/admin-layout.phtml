@@ -1,0 +1,74 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="ua">
+<head>
+    <meta charset="utf-8">
+    <?php echo $this->headTitle($this->translate('Admin Panel'))->setSeparator(' - ')->setAutoEscape(false) ?>
+
+    <?php echo $this->headMeta()
+        ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+        ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+    ?>
+
+    <!-- Le styles -->
+    <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+        ->prependStylesheet($this->basePath() . '/css/bootstrap.css')
+        ->prependStylesheet($this->basePath() . '/css/icons.css')?>
+
+    <!-- Scripts -->
+    <?php echo $this->headScript()
+        ->prependFile($this->basePath() . '/js/bootstrap.js')
+        ->prependFile($this->basePath() . '/js/jquery.min.js')
+        ->prependFile($this->basePath() . '/js/respond.min.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+        ->prependFile($this->basePath() . '/js/html5shiv.js',   'text/javascript', array('conditional' => 'lt IE 9',))
+    ; ?>
+
+</head>
+<body>
+<header class="p-3 bg-dark text-white">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="<?php echo $this->url('home'); ?>" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none" style="font-size: 40px">
+                ZF2
+            </a>
+
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="<?php echo $this->url('home'); ?>" class="nav-link px-2 text-secondary">&nbsp&nbsp Головна</a></li>
+                <li><a href="<?php echo $this->url('admin/category'); ?>" class="nav-link px-2 text-white">Категорії</a></li>
+                <li><a href="<?php echo $this->url('admin/category',array('action' => 'add')); ?>" class="nav-link px-2 text-white">Добавити категорію</a></li>
+                <li><a href="<?php echo $this->url('admin/article'); ?>" class="nav-link px-2 text-white">Статті</a></li>
+                <li><a href="<?php echo $this->url('admin/article',array('action' => 'add')); ?>" class="nav-link px-2 text-white">Добавити статтю</a></li>
+            </ul>
+
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+                <input type="search" class="form-control form-control-dark" placeholder="Пошук..." aria-label="Search">
+            </form>
+
+            <div class="text-end">
+                <button type="button" class="btn btn-outline-light me-2">Вийти</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section>
+    <div class="container">
+        <br>
+
+        <?php echo $this->navigation('admin_navigation')->breadcrumbs();?>
+        <?php echo $this->content; ?>
+
+        <br>
+
+    </div> <!-- /container -->
+
+
+</section>
+
+<!-- Footer-->
+<footer class="py-5 bg-dark">
+    <div class="container px-5"><p class="m-0 text-center text-white">Copyright &copy; ZF2 Blog author Viktor Stashkiv <?php echo date('Y');?> </p></div>
+</footer>
+<?php echo $this->inlineScript();?>
+</body>
+</html>

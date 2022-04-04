@@ -1,0 +1,52 @@
+<?php
+    $flash = $this->flashMessenger();
+    $alert = '';
+
+    if ($flash->render('success')){
+        $alert = 'class="alert alert-success alert-dismissible"';
+    }elseif($flash->render('error'))
+    {
+        $alert = 'class="alert alert-danger alert-dismissible"';
+    }elseif($flash->render('info'))
+    {
+        $alert = 'class="alert alert-info alert-dismissible"';
+    }elseif($flash->render('default'))
+    {
+        $alert = 'class="alert alert-warning alert-dismissible"';
+    }
+
+    $flash->setMessageOpenFormat("<div $alert>" . '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>')
+        ->setMessageCloseString('</div>');
+
+    echo $flash->render('error');
+    echo $flash->render('info');
+    echo $flash->render('default');
+    echo $flash->render('success');
+
+    $form->prepare();
+
+    echo $this->form()->openTag($form); // відкриття тега для форми
+    echo '<br><fieldset><legend>Реєстрація</legend>';
+    echo '<div class="form-group">';
+    echo $this->formRow($form->get('usrName'));
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo $this->formRow($form->get('usrEmail'));
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo $this->formRow($form->get('usrPassword'));
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo $this->formRow($form->get('usrPasswordConfirm'));
+    echo '</div>';
+    echo '<br>';
+
+    echo $this->formSubmit($form->get('submit'));
+    echo '</fieldset>';
+
+    echo $this->form()->closeTag();
+?>
+

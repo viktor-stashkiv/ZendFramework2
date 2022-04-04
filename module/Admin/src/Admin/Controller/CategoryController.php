@@ -44,7 +44,7 @@ class CategoryController extends BaseController
                 $message = 'Категорія добалена';
 
             } else {
-                $status = 'Error';
+                $status = 'error';
                 $message = 'Помилка параметрів';
             }
         } else {
@@ -69,7 +69,7 @@ class CategoryController extends BaseController
 
         if(empty($category)){
             $message = 'Категорія не знайдена';
-            $status = 'Error';
+            $status = 'error';
             $this->flashMessenger()
                 ->setNamespace($status)
                 ->addMessage($message);
@@ -95,9 +95,9 @@ class CategoryController extends BaseController
                 $message = 'Категорія обновлена';
 
             } else {
-                $status = 'Error';
+                $status = 'error';
                 $message = 'Помилка параметрів';
-                foreach ($form->getInputFilter()->getInvalid() as $errors){
+                foreach ($form->getInputFilter()->getInvalidInput() as $errors){
                     foreach ($errors->getMessages() as $error){
                         $message.= ' ' . $error;
                     }
@@ -120,7 +120,7 @@ class CategoryController extends BaseController
         $em = $this->getEntityManager(); // для роботи з БД
 
         $status = 'success';
-        $message = 'Категорія обновлена';
+        $message = 'Категорія видалена!';
 
         try{
             $repository = $em->getRepository('Blog\Entity\Category');
@@ -130,7 +130,7 @@ class CategoryController extends BaseController
         }
         catch (\Exception $ex)
         {
-            $status = 'Error';
+            $status = 'error';
             $message = 'Помилка видалення записа' . $ex->getMessage();
         }
 

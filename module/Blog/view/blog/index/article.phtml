@@ -1,0 +1,115 @@
+<?php
+    echo "<article>
+            <div class='page-header'>
+                <h1 style='font-size: 2em;'>{$article->getTitle()}</h1>
+            </div>
+            <div>
+                {$article->getFullArticle()}
+            </div>
+          </article>";
+?>
+
+<div class="bs-docs-section">
+    <div class="well">
+        <?php
+
+        $form->setAttribute('action',$this->url('blog',array('action' => 'comment-add'))); // добавлення action="url" в форму
+        $form->setAttribute('class','form-horizontal');
+        $form->prepare();
+
+        echo $this->form()->openTag($form); // відкриття тега для форми
+
+        echo '<br><fieldset><legend>Добавити коментар</legend>';
+
+            echo '<div style="display: none;" class="alert alert-danger alert-dismissible" id="comment_errors"><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+
+            $e = $form->get('userEmail');
+            $e->setLabelAttributes(array('class'=>'col-lg-2 control-label'));
+            echo '<div class="form-group">';
+
+                echo $this->formLabel($e);
+                echo "<div class='col-lg-10'>{$this->formEmail($e)}</div>";
+                echo '</div>';
+
+                $e = $form->get('comment');
+                $e->setLabelAttributes(array('class'=>'col-lg-2 control-label'));
+
+                echo '<div class="form-group">';
+                echo $this->formLabel($e);
+                echo "<div class='col-lg-10'>{$this->formTextarea($e)}</div>";
+                echo '</div>';
+
+                echo "<input type='hidden' value='{$article->getId()}' name='article'><br>";
+
+echo $this->formRow($form->get('submit'));
+echo '</fieldset>';
+echo $this->form()->closeTag();
+?>
+    </div>
+</div>
+
+<script>
+    $(function(){
+        $("form#comment").submit(function(){
+            var fData = $('#comment').serialize();
+            $.ajax({
+                url: '/comment-add/',
+                type: 'post',
+                dataType: 'json',
+                data: fData,
+                success: function(data) {
+                    if (data['success'] == 1) {
+                        $('#comment_errors').hide();
+                        $('#new-comment-email').html($('#user_email').val());
+                        $('#new-comment-body').html($('#user_comment').val());
+                        $('#new-comment').show();
+
+                        //$('.bs-docs-section').hide('slow');
+                        $('#no-comments').hide();
+
+                    } else {
+                        $("#comment_errors").show();
+                        for (var key in data) {
+                            $("#comment_errors").append(data[key]);
+                        }
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+<?php
+    $comments = $article->getComments();
+
+    $commentCnt = $comments->count();
+    if($commentCnt)
+    {
+        echo "<h3>Коментарі ({$commentCnt})</h3>";
+        foreach ($comments as $comment)
+        {
+            echo "<div class='card' style='margin-bottom: 10px;'>
+                    <div class='card-header'>
+                        {$comment->getUserEmail()}
+                    </div>
+                    <ul class='list-group list-group-flush'>
+                        <li class='list-group-item'>{$comment->getComment()}</li>
+                    </ul>
+                   </div>";
+
+        }
+    } else {
+        echo "<h3 id='no-comments'>Кометарів немає</h3>>";
+    }
+?>
+
+<div id="new-comment" class="card" style="display: none;">
+    <div id="new-comment-email" class="card-header"></div>
+    <ul class="list-group list-group-flush">
+        <li id="new-comment-body" class="list-group-item"></li>
+    </ul>
+</div>
+
+
+

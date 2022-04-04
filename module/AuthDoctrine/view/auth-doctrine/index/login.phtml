@@ -1,0 +1,39 @@
+<?php echo $this->messages; ?>
+
+<?php
+    $user = $this->identity();
+
+    if(empty($user))
+    {
+        $form = $this->form;
+        $form->prepare();
+
+        echo $this->form()->openTag($form);
+
+        echo '<br><fieldset><legend>Авторизація</legend>';
+
+        echo '<div class="form-group">';
+        echo $this->formRow($form->get('usrName'));
+        echo '</div>';
+
+        echo '<div class="form-group">';
+        echo $this->formRow($form->get('usrPassword'));
+        echo '</div>';
+
+        echo '<br>';
+
+        echo $this->formSubmit($form->get('submit'));
+        echo '</fieldset>';
+
+        echo $this->form()->closeTag();
+
+        echo 'Вхід не виконаний!';
+
+?>
+        <br><a href="<?php echo $this->url('auth-doctrine/default',array('controller' => 'index','action' => 'register'));?>"><?php echo 'Реєстрація'; ?></a>
+<?php
+} else {
+    echo 'Авторизований як ' . $this->escapeHtml($user->getUsrName());
+?>
+        <br><a href="<?php echo $this->url('auth-doctrine/default',array('controller' => 'index','action' => 'logout'));?>"><?php echo'Вийти'; ?> </a>
+<?php } ?>

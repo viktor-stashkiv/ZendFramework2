@@ -1,29 +1,14 @@
 <?php
 
 return array(
-    /*'doctrine' => array(
-        'driver' => array(
-            'admin_entity' => array(
-                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-                'cache' => 'array',
-                'paths' => array(
-                    'D:\xampp\htdocs\module\Admin\src\Entity',
-                ),
-            ),
-            'orm_default' => array(
-                'drivers' => array(
-                    'Admin\Entity' => 'admin_entity'
-                )
-            )
-        )
-    ), // end doctrine config*/
 
     /* Псевдоніми контроллерів*/
     'controllers' => array(
         'invokables' => array(
             'Admin\Controller\Index' => 'Admin\Controller\IndexController',
             'category' => 'Admin\Controller\CategoryController',
-            'article' => 'Admin\Controller\ArticleController'
+            'article' => 'Admin\Controller\ArticleController',
+            'comment' => 'Admin\Controller\CommentController',
         ),
     ),
 
@@ -66,16 +51,90 @@ return array(
                         ),
                     ),
 
+                    'comment' => array(
+                        'type'    => 'segment',
+                        'options' => array(
+                            'route'    => 'comment/[:action/][:id/]',
+                            'defaults' => array(
+                                'controller' => 'comment',
+                                'action' => 'index'
+                            ),
+                        ),
+                    ),
+
                 ), // child_routes
             ),  
         ),
-    ),  
+    ),
+
+    'service_manager' => array(
+        'factories' => array(
+            'navigation' => 'Zend\Navigation\Service\DefaultNavigationFactory',
+            'admin_navigation' => 'Admin\Lib\AdminNavigationFactory',
+        ),
+    ),
+
+    'navigation' => array(
+
+        'default' => array(
+            array(
+                'label' => 'Головна',
+                'route' => 'home',
+            ),
+        ),
+        'admin_navigation' => array(
+            array(
+                'label' => 'Панель управління сайтом',
+                'route' => 'admin',
+                'action' => 'index',
+                'resource' =>'Admin\Controller\Index',
+
+                'pages' => array(
+                    array(
+                        'label' => 'Статті',
+                        'route' => 'admin/article',
+                        'action' => 'index',
+                    ),
+                    array(
+                        'label' => 'Добавити статтю',
+                        'route' => 'admin/article',
+                        'action' => 'add',
+
+                    ),
+                    array(
+                        'label' => 'Категорії',
+                        'route' => 'admin/category',
+                        'action' => 'index',
+                    ),
+                    array(
+                        'label' => 'Добавити категорію',
+                        'route' => 'admin/category',
+                        'action' => 'add',
+                    ),
+                    array(
+                        'label' => 'Коментарі',
+                        'route' => 'admin/comment',
+                        'action' => 'index',
+                    ),
+                ),
+            ),
+        ),
+    ),
+
 
     'view_manager' => array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
         ),
+        'template_map' => array( // пагінація
+            'pagination_control' => __DIR__ . '/../view/layout/pagination_control.phtml',
+        ),
     ),
+
+    'module_layouts' => array( // шаблон адмінки
+        'Admin' => 'layout/admin-layout',
+    ),
+
 ); // end main
 
 

@@ -1,0 +1,312 @@
+**** Встановлення ****
+
+скачати з гіта скелетон
+
+php composer.phar self-update
+php composer.phar install
+
+в composer.json добавити "zendframework/zend-developer-tools": "0.0.2"
+php composer.phar update
+
+копіювати з D:\OpenServer\domains\zend\vendor\zendframework\zend-developer-tools\config файл zenddevelopertools.local.php.dist
+в D:\OpenServer\domains\zend\config\autoload та перенейменувати в zenddevelopertools.local.php і підключити модуль в конфізі
+'modules' => array(
+        'Application',
+        'ZendDeveloperTools', ****
+),
+
+
+**** Налаштування Apache **** 
+
+Добавити в файл Apache_2.4-PHP_5.5-5.6_vhost.conf
+
+<VirtualHost *:80>
+     ServerName zend
+     DocumentRoot D:\OpenServer\domains\zend\public
+     SetEnv APPLICATION_ENV "development"
+     <Directory D:\OpenServer\domains\zend\public>
+         DirectoryIndex index.php
+         AllowOverride All
+         Order allow,deny
+         Allow from all
+     </Directory>
+ </VirtualHost>
+
+**** Добавлення модуля **** 
+
+В папці module створити папки 
+config в конфізі добавити module.config.php
+
+    'controllers' => array(
+        'invokables' => array( // псевдоніми контроллерів
+            'Blog\Controller\Index' => 'Blog\Controller\IndexController'
+        ),
+    ),
+
+    'router' => array(
+        'routes' => array(
+            'blog' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/[:action/][:id/]',
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        ':id'     => '[0-9]+',
+                    ),
+                    'defaults' => array(
+                        'controller' => 'Blog\Controller\Index',
+                        'action'     => 'index',
+                    ),
+                ),
+            ),
+        ),
+    ),  
+
+    'view_manager' => array(
+        'template_path_stack' => array(
+            __DIR__ . '/../view',
+        ),
+    ),
+); // end main
+
+src створити папки Blog(Назва модуля) та Entity(Якщо потрібно БД) в папці Blog(назва модуля) створити папку Controller
+дабавити файл IndexController.php в нього
+<?php
+
+namespace Blog\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
+
+class IndexController extends AbstractActionController
+{
+    public function indexAction()
+    {
+        return new ViewModel();
+    }
+}
+
+view створити папку blog(назва модуля або роута) створити папку index в ній файл index.phtml
+
+та файл Module.php
+<?php
+namespace Blog;
+
+
+class Module
+{
+    public function getConfig()
+    {
+        return include __DIR__ . '/config/module.config.php';
+    }
+
+    public function getAutoloaderConfig()
+    {
+        return array(
+            'Zend\Loader\StandardAutoloader' => array(
+                'namespaces' => array(
+                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
+                ),
+            ),
+        );
+    }
+}
+
+та добавити модуль в конфіг
+
+**** Doctrine налаштування ****
+
+В composer.json добавити модуль "doctrine/doctrine-orm-module": "0.8" та добавити модуль в когфіг
+'DoctrineModule',
+'DoctrineORMModule',
+
+В папці config/autoload створити файл doctrine.local.php в ньому налаштування БД
+
+<?php 
+
+return array(
+    'doctrine' => array(
+        'connection' => array(
+            'orm_default' => array(
+                'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
+                'params' => array(
+                    'host' => 'localhost',
+                    'port' => '3306',
+                    'user' => 'root',
+                    'password' => '',
+                    'dbname' => 'zenddb',
+
+		    'charset' => 'utf8', // кодировка для кирилиці
+                    'driverOptions' => array(
+                        1002 => 'SET NAMES utf8'
+                    ),
+                )
+            )
+        )
+    ),
+);
+
+В модуль Blog(назва модуля) в файл module.config.php вставити 
+return array(
+    'doctrine' => array(
+        'driver' => array(
+            'blog_entity' => array(
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'cache' => 'array',
+                'paths' => array(
+                    'D:\xampp\htdocs\module\Blog\src\Entity',
+                ),
+            ),
+            'orm_default' => array(
+                'drivers' => array(
+                    'Blog\Entity' => 'blog_entity'
+                )
+            )
+        )
+    ), // end doctrine config
+
+**** Генерація сутностей ****
+створити в vendor\bin файл 1.bat та виконати в консолі нижче наведені команди (./bat)
+
+call doctrine-module orm:convert-mapping annotation module/Blog/src/ --namespace="Blog\Entity\\" --from-database
+call doctrine-module orm:generate-entities module/Blog/src/ --generate-annotations=true // не працює 
+
+після цього створиться папка Entity і там будуть класи відповідно до таблиць в БД
+
+Описати гетерри та сетерри 
+
+/**
+     * Get Id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+ 
+    /**
+     * Set categoryKey
+     *
+     * @param string $categoryKey
+     * @return Category
+     */
+    public function setCategoryKey($categoryKey)
+    {
+        $this->categoryKey = $categoryKey;
+     
+        return $this;
+    }
+ 
+    /**
+     * Get categoryKey
+     *
+     * @return string 
+     */
+    public function getCategoryKey()
+    {
+        return $this->categoryKey;
+    }
+
+     /**
+     * Set categoryName
+     *
+     * @param string $categoryName
+     * @return Category
+     */
+    public function setCategoryName($categoryKey)
+    {
+        $this->categoryName = $categoryName;
+     
+        return $this;
+    }
+ 
+    /**
+     * Get categoryName
+     *
+     * @return string 
+     */
+    public function getCategoryName()
+    {
+        return $this->categoryName;
+    }
+**** Доступ до БД та запити ****
+
+В контролллері
+
+class CategoryController extends AbstractActionController
+{
+    public function indexAction()
+    {
+        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager'); // Entity менеджер
+        
+        $query = $entityManager->createQuery('SELECT u FROM Blog\Entity\Category u ORDER BY  u.id DESC');
+        $rows = $query->getResult(); // повере масив об'єктів з БД
+
+    
+        return array('category' => $rows); передасть дані в view
+
+    }
+}
+
+Обробка 
+
+<table class="table table-striped table-hover">
+    <tbody>
+        <tr>
+            <th>#</th>
+            <th>Ключ</th>
+            <th>Назва</th>
+            <th>Дія</th>
+        </tr>
+        <?php
+        foreach($category as $item){
+            echo "<tr>
+                <td>{$item->getId()}</td>
+                <td>{$item->getCategoryKey()}</td>
+                <td>{$item->getCategoryName()}</td>";
+            
+            echo '<td><a href="'.$this->url('admin/category',array('action' => 'edit','id' => $item->getId())).'">Редагувати </a>&nbsp;&nbsp;
+            <a href="'.$this->url('admin/category', array('action' => 'delete','id' => $item->getId())).'" onclick="if(window.confirm(\'Видалити запис?\')){/*eslint-disable-line*/ document.location = this.href;} return false;"> Видалити </a></td>';
+        }
+        ?>
+    </tbody>
+</table>
+
+**** Autoload ****
+
+composer init
+
+{
+    "name": "project/name",
+    "description": "test",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "viktor-stashkiv",
+            "email": "stashkiv77@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {},
+    "autoload": { //// autoload
+        "psr-4": {
+            "": ""
+        }
+    } /// end autoload
+}
+
+composer install
+
+
+
+
+
+
+
+
+
+ 
+ 
+

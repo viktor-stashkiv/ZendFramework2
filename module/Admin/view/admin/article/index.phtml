@@ -1,1 +1,79 @@
 <h3>Статті</h3>
+<a href="/admin/article/add/"> Добавити </a><br>
+<?php
+    $flash = $this->flashMessenger();
+    $alert = '';
+
+    if ($flash->render('success')){
+            $alert = 'class="alert alert-success alert-dismissible"';
+        }elseif($flash->render('error'))
+        {
+            $alert = 'class="alert alert-danger alert-dismissible"';
+        }elseif($flash->render('info'))
+        {
+            $alert = 'class="alert alert-info alert-dismissible"';
+        }elseif($flash->render('default'))
+        {
+            $alert = 'class="alert alert-warning alert-dismissible"';
+        }
+
+    $flash->setMessageOpenFormat("<div $alert>" . '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>')
+        ->setMessageCloseString('</div>');
+
+    echo $flash->render('error');
+    echo $flash->render('info');
+    echo $flash->render('default');
+    echo $flash->render('success');
+
+    /*echo $flash->render('error',array('alert','alert-dismissable','alert-danger')); // одразу рендерить з класами які вказані в масиві
+    echo $flash->render('info',array('alert','alert-dismissable','alert-info'));
+    echo $flash->render('default',array('alert','alert-dismissable','alert-warning'));
+    echo $flash->render('success',array('alert','alert-dismissable','alert-success'));*/
+
+?>
+
+<table class="table table-striped table-hover">
+    <tbody><tr>
+        <th>#</th>
+        <th>Категорія</th>
+        <th>Заголовок</th>
+        <th>Стаття</th>
+        <th>Початок статті</th>
+        <th>Опубліковано</th>
+        <th>Дія</th>
+    </tr>
+    <?php
+        foreach ($articles as $item){
+            $category = $item->getCategory();
+            if($category){
+                $catName = $category->getCategoryName();
+            } else {
+                $catName = '';
+            }
+
+            if($item->getIsPublic()){
+                $isPublic = 'Так';
+            } else {
+                $isPublic = 'Ні';
+            }
+
+            echo "<tr>
+                    <td>{$item->getId()}</td>
+                    <td>{$catName}</td>
+                    <td>{$item->getTitle()}</td>
+                    <td>{$item->getArticleForTable()}</td>
+                    <td>{$item->getShortArticleForTable()}</td>
+                    <td>{$isPublic}</td>";
+
+            echo '<td><a href="'.$this->url('admin/article',array('action' => 'edit','id' => $item->getId())).'">Редагувати </a>&nbsp;&nbsp;
+                    <a href="'.$this->url('admin/article', array('action' => 'delete','id' => $item->getId())).'" onclick="if(window.confirm(\'Видалити запис?\')){/*eslint-disable-line*/ document.location = this.href;} return false;"> Видалити </a></td>';
+        }
+    ?>
+    </tbody>
+</table>
+
+<?php
+    echo $this->paginationControl($articles,
+                                    'Sliding',
+                                    'pagination_control',array('route','admin/article'));
+?>
